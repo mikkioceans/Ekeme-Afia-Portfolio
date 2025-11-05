@@ -1,0 +1,330 @@
+:root{
+  /* Light theme palette */
+  --bg: #ffffff;          /* white background */
+  --panel: #ffffff;       /* sections/cards are white */
+  --text: #0a0a0a;        /* near black text */
+  --muted: #5f6368;       /* subtle gray for secondary text */
+  --brand: #235AF4;       /* blue accent (tweak if you want) */
+  --line: #e6e7eb;        /* soft borders */
+  --card: #ffffff;        /* cards on white */
+  --shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+*{ box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Use geometric sans for headings */
+h1,h2,h3,h4,h5,h6,.brand,.btn{
+  font-family: "Plus Jakarta Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
+}
+
+/* Layout helpers */
+.container{ width: min(1080px, 92%); margin-inline: auto; }
+
+.site-header{
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: blur(8px);
+  background: color-mix(in oklab, var(--bg) 80%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; }
+.brand{
+  display:inline-grid; place-items:center;
+  width:40px; height:40px; border-radius:10px;
+  background: var(--brand); color:#fff; font-weight:800; letter-spacing:.5px; text-decoration:none;
+}
+.nav__toggle{
+  display:none; background:transparent; border:1px solid var(--line); color:var(--text);
+  padding:8px 10px; border-radius:8px; font-weight:600;
+}
+.nav__list{ display:flex; gap:20px; list-style:none; margin:0; padding:0; }
+.nav__list a{
+  text-decoration:none; color:var(--text); opacity:.85; font-weight:600;
+}
+.nav__list a:hover{ opacity:1; color: var(--brand); }
+.nav__list .cta{
+  padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:#fff;
+}
+
+/* Hero */
+.hero{ display:grid; grid-template-columns: 1.3fr .9fr; gap:40px; align-items:center; padding: 64px 0 32px; }
+.hero__title{ font-size: clamp(34px, 6vw, 56px); line-height:1.15; margin:0 0 8px; }
+.hero__tag{ margin:0 0 14px; color:var(--brand); font-weight:700; letter-spacing:.2px; }
+.hero__lead{ color: var(--muted); max-width: 60ch; }
+.hero__meta{ display:flex; gap:14px; flex-wrap:wrap; margin-top:18px; }
+.meta-link{ color:var(--text); text-decoration:none; border-bottom:1px dashed var(--line); }
+.meta-link:hover{ color: var(--brand); border-bottom-color: var(--brand); }
+.hero__actions{ display:flex; gap:12px; margin-top:22px; }
+/* .profile-img{
+    border-radius: 30px;
+} */
+
+/* === Profile image: stylish, accessible, light === */
+.profile-wrap{
+  --size: 320px;                 /* quick knob: 280–360px works well */
+  --radius: 28px;                /* squircle-ish */
+  --ring: 2.5px;                 /* ring thickness */
+  --ring-gap: 8px;               /* gap from image to ring */
+  --glow: 36px;                  /* halo spread */
+
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 7 / 8;
+  border-radius: var(--radius);
+  display: grid;
+  place-items: center;
+  isolation: isolate;            /* keeps filters contained */
+  transform-style: preserve-3d;
+  box-shadow: var(--shadow);
+}
+
+/* 1) The image */
+.profile-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius) * 0.9);
+  display: block;
+  background: #f3f5fb;
+
+  /* crisp edge + light border to pop on white UI */
+  border: 1px solid var(--line);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.04) inset,
+    0 12px 28px rgba(0,0,0,0.06);
+}
+
+/* 2) Gradient ring around the image */
+.profile-wrap::before{
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ring-gap));
+  border-radius: calc(var(--radius) + var(--ring-gap));
+  padding: var(--ring);
+  background:
+    conic-gradient(from 200deg,
+      color-mix(in oklab, var(--brand), #ffffff 25%) 0 30%,
+      #9db4ff 50%,
+      color-mix(in oklab, var(--brand), #000 20%) 75%,
+      var(--brand) 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  filter: saturate(1.1);
+}
+
+/* 3) Soft ambient glow */
+.profile-wrap::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--radius) * 1.05);
+  background:
+    radial-gradient(60% 70% at 50% 80%, color-mix(in oklab, var(--brand), #ffffff 70%), transparent 60%),
+    radial-gradient(50% 50% at 80% 20%, #cdd8ff, transparent 50%);
+  filter: blur(var(--glow));
+  opacity: .35;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* 4) Delightful but subtle hover tilt + lift */
+@media (hover:hover){
+  .profile-wrap{
+    transition: transform .5s cubic-bezier(.2,.8,.2,1),
+                filter .5s ease;
+    will-change: transform;
+  }
+  .profile-wrap:hover{
+    transform: translateY(-4px) rotateX(6deg) rotateY(-6deg);
+    filter: saturate(1.02);
+  }
+}
+
+/* 5) Motion-safe for folks who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .profile-wrap,
+  .profile-wrap:hover{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Optional shape variants (pick one by adding the class to .profile-wrap) */
+.profile-wrap.is-circle .profile-img,
+.profile-wrap.is-circle{ border-radius: 50%; aspect-ratio: 1/1; }
+
+.profile-wrap.is-blob .profile-img{ clip-path: path("M0.77,0.49c0.04,0.19,-0.02,0.43,-0.14,0.6c-0.12,0.17,-0.31,0.29,-0.51,0.32C0.2,1.44,0,1.35, -0.14,1.17C-0.29,1,-0.37,0.75,-0.35,0.53c0.02,-0.22,0.14,-0.42,0.3,-0.57c0.16,-0.14,0.36,-0.22,0.57,-0.24C0.74,-0.29,0.95,-0.21,1.08,-0.05C1.21,0.11,1.26,0.31,1.22,0.49Z"); }
+
+.btn{
+  display:inline-block; padding:10px 14px; border-radius:12px;
+  background: var(--brand); color:#fff; font-weight:800; text-decoration:none;
+  box-shadow: var(--shadow);
+}
+.btn--ghost{
+  background: transparent; color: var(--text);
+  border:1px solid var(--line);
+}
+.btn--ghost:hover{ border-color: var(--brand); color: var(--brand); }
+
+.hero__media{ display:grid; place-items:center; }
+.portrait{
+  width: 280px; height: 320px; border-radius: 24px;
+  background: #f3f5fb; border:1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+/* Sections */
+.section{ padding: 64px 0; }
+.section__head{ margin-bottom: 18px; }
+.section__head h2{ font-size: clamp(24px, 3vw, 32px); margin:0 0 6px; }
+.section__sub{ color:var(--muted); margin:0; }
+
+/* Cards / Grid */
+.grid{ display:grid; gap:18px; }
+.grid.cards{ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.grid.two{ grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px 24px; }
+
+.card{
+  background: var(--card); border:1px solid var(--line); border-radius: 14px; padding:18px;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  box-shadow: var(--shadow);
+}
+.card:hover{
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--line), var(--brand) 30%);
+}
+.card__eyebrow{ color:#6b7280; font-size:.9rem; }
+.card__title{ margin:6px 0 6px; font-size: 1.15rem; }
+.card__desc{ color:var(--muted); margin: 6px 0 10px; }
+.pill-list{ display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none; }
+.pill-list li{
+  font-size:.85rem; padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line); background:#f8f9fb;
+}
+.text-link{ color: var(--brand); text-decoration: none; font-weight:700; }
+.text-link[aria-disabled="true"]{ opacity:.6; cursor:not-allowed; }
+
+/* Timeline */
+.timeline{ display:grid; gap:18px; }
+.role{
+  background: var(--card); border:1px solid var(--line); border-radius: 14px; padding:18px;
+  box-shadow: var(--shadow);
+}
+.role__head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.role__head--minor{ cursor:pointer; }
+.role__list{ margin:10px 0; padding-left: 18px; }
+.role__impact{ color: var(--muted); margin: 8px 0 0; }
+
+/* Skills */
+.skills{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.skills__col{
+  background: var(--card); border:1px solid var(--line); border-radius: 14px; padding:16px;
+  box-shadow: var(--shadow);
+}
+.skills__col h4{ margin: 0 0 8px; }
+
+/* Lists */
+.list{ margin: 0; padding-left: 18px; }
+.note{ color: var(--muted); margin-top: 10px; }
+
+/* Contact */
+.contact-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; }
+.contact-tile{
+  display:flex; flex-direction:column; gap:4px;
+  background: var(--card); border:1px solid var(--line); border-radius: 14px; padding:16px;
+  text-decoration:none; color:var(--text); box-shadow: var(--shadow);
+}
+.contact-tile:hover{ border-color: var(--brand); }
+.tile-label{ color: var(--muted); font-size:.9rem; }
+.tile-value{ font-weight:700; }
+
+/* Footer */
+.site-footer{ border-top:1px solid var(--line); padding: 28px 0; text-align:center; color: var(--muted); }
+
+/* Reveal animation */
+.reveal{ opacity:0; transform: translateY(10px); transition: all .5s ease; }
+.reveal.is-visible{ opacity:1; transform: translateY(0); }
+
+/* Responsive */
+@media (max-width: 880px){
+  .hero{ grid-template-columns: 1fr; }
+  .hero__media{ order:-1; }
+  .nav__toggle{ display:block; }
+  .nav__list{
+    display:none; position:absolute; right:4%; top:58px; background: #fff; border:1px solid var(--line); border-radius:12px; padding:10px;
+    box-shadow: var(--shadow);
+  }
+  .nav__list.is-open{ display:block; }
+  .nav__list li{ margin:8px 0; }
+}
+
+/* == Cards: equal height + keep LINK at bottom == */
+.grid.cards{ align-items: stretch; }
+
+.card{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card__desc{
+  color: var(--muted);
+  margin: 6px 0 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;          /* adjust 3–6 lines if needed */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.5em;               /* keeps rows even */
+}
+
+.card__links{
+  margin-top: auto;                 /* pins to bottom */
+  padding-top: 8px;
+}
+
+/* == Text link polish + accessible focus == */
+.text-link{
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 700;
+  position: relative;
+}
+.text-link::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: currentColor;
+  opacity: .2;
+  transition: opacity .2s ease, transform .2s ease;
+  transform: scaleX(.6);
+  transform-origin: left;
+}
+.text-link:hover::after{ opacity: .5; transform: scaleX(1); }
+
+.text-link:focus-visible,
+.meta-link:focus-visible,
+.nav__list a:focus-visible,
+.btn:focus-visible{
+  outline: 3px solid color-mix(in oklab, var(--brand), #ffffff 20%);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* (Optional) slightly tighter grid spacing */
+.card{ padding: 16px; }
+.grid.cards{ gap: 16px; }
